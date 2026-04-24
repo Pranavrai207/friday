@@ -358,5 +358,45 @@
     {
         "role": "assistant",
         "content": "Goodbye."
+    },
+    {
+        "role": "user",
+        "content": "Hello friday."
+    },
+    {
+        "role": "assistant",
+        "content": "Hello, how can I assist you today?"
+    },
+    {
+        "role": "user",
+        "content": "Why you are not able to playing the youtube videos inside this world intelligence monitor?"
+    },
+    {
+        "role": "assistant",
+        "content": "I'm a text-based AI, I don't have the capability to play YouTube videos or access external multimedia content. I can only provide text-based information and responses."
+    },
+    {
+        "role": "user",
+        "content": "Hello friday so tell me what's happening around the world?"
+    },
+    {
+        "role": "assistant",
+        "content": "Unfortunately, I don't have real-time access to current events or news from around the world. I can provide general information on a wide range of topics, but I don't have the ability to browse the internet or access up-to-the-minute news."
+    },
+    {
+        "role": "user",
+        "content": "Non stop the music."
+    },
+    {
+        "role": "assistant",
+        "content": "It seems like you're referencing a song or a phrase, possibly related to music or a playlist."
+    },
+    {
+        "role": "user",
+        "content": "Tell me about artificial intelligence."
+    },
+    {
+        "role": "assistant",
+        "content": "Artificial intelligence (AI) refers to the development of computer systems that can perform tasks that typically require human intelligence, such as learning, problem-solving, and decision-making. AI involves the use of algorithms, data, and computer power to enable machines to think and act like humans."
     }
 ]

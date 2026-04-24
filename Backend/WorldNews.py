@@ -16,6 +16,7 @@ from gnews import GNews
 from groq import Groq
 from dotenv import dotenv_values
 from datetime import datetime
+import re
 
 env_vars = dotenv_values(".env")
 GroqAPIKey = env_vars.get("GroqAPIKey")
@@ -172,6 +173,29 @@ def geocode_headline(headline: str):
     return None
 
 
+def _get_youtube_video_id(query: str):
+    """Scrapes YouTube search page for the first video ID matching the query."""
+    try:
+        # Clean query for URL
+        search_url = f"https://www.youtube.com/results?search_query={query.replace(' ', '+')}"
+        resp = requests.get(search_url, headers=HEADERS, timeout=5)
+        if resp.status_code == 200:
+            # Look for the watch?v= pattern
+            ids = re.findall(r"watch\?v=([a-zA-Z0-9_-]{11})", resp.text)
+            # Filter out common non-video IDs if possible, or just take the first unique one
+            unique_ids = []
+            for vid in ids:
+                if vid not in unique_ids:
+                    unique_ids.append(vid)
+                if len(unique_ids) >= 1: break
+            
+            if unique_ids:
+                return unique_ids[0]
+    except Exception as e:
+        print(f"[WorldNews] YouTube dynamic search failed for '{query}': {e}")
+    return None
+
+
 def GetWorldNews(topic: str = "world", max_articles: int = 10) -> str:
     print(f"\n[WorldNews] === Fetching '{topic}' news ===")
     articles = _get_headlines(topic, max_articles)
@@ -221,30 +245,22 @@ def _open_world_monitor(articles: list, topic: str = "world"):
         if fb["city"] not in seen_cities and len(markers) < 8:
             markers.append(fb)
 
-    # Verified Live Video IDs (Latest as of April 2026)
-    # Format: (VideoID, Label)
-    VIDEO_MAP = {
-        "world": [
-            ("iipR5yUp36o", "ABC NEWS LIVE"),
-            ("YDvsBbKfLPA", "SKY NEWS LIVE")
-        ],
-        "india": [
-            ("Ygi3z94x2t8", "INDIA TODAY LIVE"),
-            ("4dtlhcvb-YU", "NDTV 24x7 LIVE")
-        ],
-        "tech": [
-            ("iEpJwprxDdk", "BLOOMBERG TECH"),
-            ("YDvsBbKfLPA", "SKY NEWS LIVE")
-        ],
-        "business": [
-            ("iEpJwprxDdk", "BLOOMBERG LIVE"),
-            ("YDvsBbKfLPA", "SKY NEWS LIVE")
-        ]
-    }
+    # Dynamic Video Fetching based on Headlines
+    print(f"[WorldNews] Fetching dynamic video intelligence for '{topic}'...")
     
-    selected_feeds = VIDEO_MAP.get(topic, VIDEO_MAP["world"])
-    v1_id, v1_label = selected_feeds[0]
-    v2_id, v2_label = selected_feeds[1]
+    # Define primary search queries
+    q1 = articles[0] if articles else f"latest {topic} news"
+    q2 = articles[1] if len(articles) > 1 else f"top news today {topic}"
+    
+    v1_id = _get_youtube_video_id(q1)
+    v2_id = _get_youtube_video_id(q2)
+    
+    # Fallbacks if search fails or is restricted
+    if not v1_id: v1_id = "iipR5yUp36o" # ABC News Live
+    if not v2_id: v2_id = "YDvsBbKfLPA" # Sky News Live
+
+    v1_label = "INTEL FEED A"
+    v2_label = "INTEL FEED B"
 
     topic_label = {"world":"WORLD","tech":"TECHNOLOGY","india":"INDIA","business":"BUSINESS"}.get(topic,"WORLD")
     now = datetime.now()
@@ -409,20 +425,24 @@ body::before {{ content:''; position:fixed; inset:0; background:repeating-linear
         <div class="dash-row video-section">
             <div class="panel video-main">
                 <div class="panel-header"><i>&#9673;</i> {v1_label}</div>
-                <div class="iframe-container">
-                    <iframe src="https://www.youtube.com/embed/{v1_id}?autoplay=1&mute=1&controls=0" allowfullscreen></iframe>
-                    <div class="yt-overlay">
-                        <a href="https://www.youtube.com/watch?v={v1_id}" target="_blank" class="yt-btn">▶ WATCH ON YOUTUBE</a>
-                    </div>
+                <div class="iframe-container" style="background:url('https://img.youtube.com/vi/{v1_id}/maxresdefault.jpg') center/cover no-repeat; display:flex; align-items:center; justify-content:center; border-bottom:2px solid var(--blue);">
+                    <a href="https://www.youtube.com/watch?v={v1_id}" target="_blank" style="text-decoration:none;">
+                        <div style="width:70px; height:70px; background:rgba(0,168,255,0.6); border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid var(--cyan); box-shadow:0 0 25px rgba(0,168,255,0.9); transition:transform 0.2s; backdrop-filter:blur(4px);" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                            <span style="color:white; font-size:30px; margin-left:6px; text-shadow:0 0 10px #fff;">▶</span>
+                        </div>
+                    </a>
+                    <div style="position:absolute; bottom:10px; right:10px; background:rgba(6,9,13,0.9); border:1px solid var(--cyan); color:var(--cyan); font-family:var(--display); font-size:9px; padding:4px 10px; letter-spacing:2px; box-shadow:0 0 10px rgba(0,212,255,0.3);">SECURE LINK ESTABLISHED</div>
                 </div>
             </div>
             <div class="panel video-sub">
                 <div class="panel-header"><i>&#9673;</i> {v2_label}</div>
-                <div class="iframe-container">
-                    <iframe src="https://www.youtube.com/embed/{v2_id}?autoplay=1&mute=1&controls=0" allowfullscreen></iframe>
-                    <div class="yt-overlay">
-                        <a href="https://www.youtube.com/watch?v={v2_id}" target="_blank" class="yt-btn">▶ WATCH ON YOUTUBE</a>
-                    </div>
+                <div class="iframe-container" style="background:url('https://img.youtube.com/vi/{v2_id}/maxresdefault.jpg') center/cover no-repeat; display:flex; align-items:center; justify-content:center; border-bottom:2px solid var(--blue);">
+                    <a href="https://www.youtube.com/watch?v={v2_id}" target="_blank" style="text-decoration:none;">
+                        <div style="width:50px; height:50px; background:rgba(0,168,255,0.6); border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid var(--cyan); box-shadow:0 0 15px rgba(0,168,255,0.9); transition:transform 0.2s; backdrop-filter:blur(4px);" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                            <span style="color:white; font-size:20px; margin-left:4px; text-shadow:0 0 10px #fff;">▶</span>
+                        </div>
+                    </a>
+                    <div style="position:absolute; bottom:10px; right:10px; background:rgba(6,9,13,0.9); border:1px solid var(--cyan); color:var(--cyan); font-family:var(--display); font-size:8px; padding:3px 8px; letter-spacing:1px; box-shadow:0 0 10px rgba(0,212,255,0.3);">STANDBY</div>
                 </div>
             </div>
         </div>
