@@ -94,5 +94,269 @@
     {
         "role": "assistant",
         "content": "Congratulations, that's wonderful news."
+    },
+    {
+        "role": "user",
+        "content": "Hello friday."
+    },
+    {
+        "role": "assistant",
+        "content": "Hello, how are you?"
+    },
+    {
+        "role": "user",
+        "content": "I am fine thank you."
+    },
+    {
+        "role": "assistant",
+        "content": "That's great to hear. Is there anything I can help you with or would you like to chat?"
+    },
+    {
+        "role": "user",
+        "content": "4:00 a.m."
+    },
+    {
+        "role": "assistant",
+        "content": "That's early in the morning."
+    },
+    {
+        "role": "user",
+        "content": "Request to already hai."
+    },
+    {
+        "role": "assistant",
+        "content": "Your request is already being processed or considered."
+    },
+    {
+        "role": "user",
+        "content": "You didn't create the image of a lion."
+    },
+    {
+        "role": "assistant",
+        "content": "I'm a text-based AI, I don't have the capability to create images, including one of a lion."
+    },
+    {
+        "role": "user",
+        "content": "Kudiye ni tere brown rang ne."
+    },
+    {
+        "role": "assistant",
+        "content": "It seems like you're quoting a song lyrics, possibly from a Bollywood song."
+    },
+    {
+        "role": "user",
+        "content": "Yeah when i snap change the image ok?"
+    },
+    {
+        "role": "assistant",
+        "content": "I'm a text-based AI, I don't have the capability to display or change images."
+    },
+    {
+        "role": "user",
+        "content": "Okay friday when i snap change the image ok?"
+    },
+    {
+        "role": "assistant",
+        "content": "As a text-based AI, I don't have the ability to display or change images, nor can I respond to physical actions like snapping."
+    },
+    {
+        "role": "user",
+        "content": "Okay."
+    },
+    {
+        "role": "assistant",
+        "content": "Is there anything else I can help you with?"
+    },
+    {
+        "role": "user",
+        "content": "Take a screenshot."
+    },
+    {
+        "role": "assistant",
+        "content": "I'm a text-based AI, I don't have the capability to take screenshots."
+    },
+    {
+        "role": "user",
+        "content": "Punjab anarthi pani khave na gori gori kudiya n koi n lage na."
+    },
+    {
+        "role": "assistant",
+        "content": "It seems like you're quoting a Punjabi song or phrase, but I'm not familiar with this specific text. Can you please provide more context or information about what you're trying to say?"
+    },
+    {
+        "role": "user",
+        "content": "Tu jahan."
+    },
+    {
+        "role": "assistant",
+        "content": "It seems like you're speaking in Hindi, but I'm not sure what you're trying to say. Could you please translate or provide more context?"
+    },
+    {
+        "role": "user",
+        "content": "Tum bin na dekho."
+    },
+    {
+        "role": "assistant",
+        "content": "It seems like you're quoting a song title or lyrics, possibly from a Bollywood song."
+    },
+    {
+        "role": "user",
+        "content": "Okay, bye."
+    },
+    {
+        "role": "assistant",
+        "content": "Goodbye."
+    },
+    {
+        "role": "user",
+        "content": "Hello friday."
+    },
+    {
+        "role": "assistant",
+        "content": "Hello, how can I assist you today?"
+    },
+    {
+        "role": "user",
+        "content": "Hello."
+    },
+    {
+        "role": "assistant",
+        "content": "Hello, what's on your mind?"
+    },
+    {
+        "role": "user",
+        "content": "Bhai mere pass to bhi honge."
+    },
+    {
+        "role": "assistant",
+        "content": "It seems like you're speaking in Hindi, but I'm not sure what you're trying to say. Could you please translate or provide more context?"
+    },
+    {
+        "role": "user",
+        "content": "Theek hai nahin to fir dekhta hun."
+    },
+    {
+        "role": "assistant",
+        "content": "It seems like you're saying \"okay, if not then I'll see\" or something similar, but I'm not sure what you're referring to. Could you please provide more context?"
+    },
+    {
+        "role": "user",
+        "content": "Today's latest update in india."
+    },
+    {
+        "role": "assistant",
+        "content": "Unfortunately, I don't have any information on the latest updates in India as the search results for 'Today's latest update in India' are empty."
+    },
+    {
+        "role": "user",
+        "content": "What's happening in new delhi?"
+    },
+    {
+        "role": "assistant",
+        "content": "Unfortunately, I don't have any information on what's happening in New Delhi as the search results for 'What's happening in New Delhi?' are empty."
+    },
+    {
+        "role": "user",
+        "content": "So tell me the sources where you get these news is?"
+    },
+    {
+        "role": "assistant",
+        "content": "I don't have have access to external sources or websites to provide real-time news updates."
+    },
+    {
+        "role": "user",
+        "content": "But."
+    },
+    {
+        "role": "assistant",
+        "content": "I can suggest checking reputable news websites or platforms for the latest updates and information."
+    },
+    {
+        "role": "user",
+        "content": "Okay, bye."
+    },
+    {
+        "role": "assistant",
+        "content": "Goodbye."
+    },
+    {
+        "role": "user",
+        "content": "Hello friday."
+    },
+    {
+        "role": "assistant",
+        "content": "Hello, how can I assist you today?"
+    },
+    {
+        "role": "user",
+        "content": "Okay friday tell me about something."
+    },
+    {
+        "role": "assistant",
+        "content": "Let's talk about space exploration. Would you like to know about a specific topic, like black holes, Mars, or something else?"
+    },
+    {
+        "role": "user",
+        "content": "Okay, bye."
+    },
+    {
+        "role": "assistant",
+        "content": "Goodbye."
+    },
+    {
+        "role": "user",
+        "content": "Channel does not."
+    },
+    {
+        "role": "assistant",
+        "content": "It seems like your sentence is incomplete. Could you please provide more context or finish your thought?"
+    },
+    {
+        "role": "user",
+        "content": "Yaar note karna hai to bhul gaya tha."
+    },
+    {
+        "role": "assistant",
+        "content": "It seems like you're saying you forgot to take a note, but I'm not sure what you're referring to. Could you please provide more context?"
+    },
+    {
+        "role": "user",
+        "content": "2 + 2."
+    },
+    {
+        "role": "assistant",
+        "content": "The answer is 4."
+    },
+    {
+        "role": "user",
+        "content": "Tell me about whatsapp in around the world."
+    },
+    {
+        "role": "assistant",
+        "content": "Unfortunately, the search results for 'Tell me about whatsapp in around the world' are empty, so I don't have any information to provide on this topic."
+    },
+    {
+        "role": "user",
+        "content": "Typing around the world."
+    },
+    {
+        "role": "assistant",
+        "content": "Typing is a universal skill used by people all around the world to communicate and create content on computers, phones, and other devices."
+    },
+    {
+        "role": "user",
+        "content": "Background."
+    },
+    {
+        "role": "assistant",
+        "content": "The term \"background\" can refer to the wallpaper or image displayed on a computer or phone screen, or it can refer to the circumstances or context surrounding a person, event, or situation."
+    },
+    {
+        "role": "user",
+        "content": "Okay, bye."
+    },
+    {
+        "role": "assistant",
+        "content": "Goodbye."
     }
 ]
