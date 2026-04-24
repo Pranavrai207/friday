@@ -9,18 +9,19 @@ co = cohere.Client(api_key=CohereAPIKey)
 
 funcs = [
     "exit", "general", "realtime", "open", "close", "play",
-    "generate image", "create image", "draw image", "system", "content", 
-    "google search", "youtube search", "reminder"
+    "generate image", "create image", "draw image", "system", "content",
+    "google search", "youtube search", "reminder", "world_news"
 ]
 
 messages = []
 
 preamble = """
 You are a very accurate Decision-Making Model, which decides what kind of a query is given to you.
-You will decide whether a query is a 'general' query, a 'realtime' query, or is asking to perform any task or automation like 'open facebook, instagram', 'can you write a application and open it in notepad'
+You will decide whether a query is a 'general' query, a 'realtime' query, a 'world_news' query, or is asking to perform any task or automation like 'open facebook, instagram', 'can you write a application and open it in notepad'
 *** Do not answer any query, just decide what kind of query is given to you. ***
 -> Respond with 'general ( query )' if a query can be answered by a llm model (conversational ai chatbot) and doesn't require any up to date information like if the query is 'who was akbar?' respond with 'general who was akbar?', if the query is 'how can i study more effectively?' respond with 'general how can i study more effectively?', if the query is 'can you help me with this math problem?' respond with 'general can you help me with this math problem?', if the query is 'Thanks, i really liked it.' respond with 'general thanks, i really liked it.' , if the query is 'what is python programming language?' respond with 'general what is python programming language?', etc. Respond with 'general (query)' if a query doesn't have a proper noun or is incomplete like if the query is 'who is he?' respond with 'general who is he?', if the query is 'what's his networth?' respond with 'general what's his networth?', if the query is 'tell me more about him.' respond with 'general tell me more about him.', and so on even if it require up-to-date information to answer. Respond with 'general (query)' if the query is asking about time, day, date, month, year, etc like if the query is 'what's the time?' respond with 'general what's the time?'.
--> Respond with 'realtime ( query )' if a query can not be answered by a llm model (because they don't have realtime data) and requires up to date information like if the query is 'who is indian prime minister' respond with 'realtime who is indian prime minister', if the query is 'tell me about facebook's recent update.' respond with 'realtime tell me about facebook's recent update.', if the query is 'tell me news about coronavirus.' respond with 'realtime tell me news about coronavirus.', etc and if the query is asking about any individual or thing like if the query is 'who is akshay kumar' respond with 'realtime who is akshay kumar', if the query is 'what is today's news?' respond with 'realtime what is today's news?', if the query is 'what is today's headline?' respond with 'realtime what is today's headline?', etc.
+-> Respond with 'realtime ( query )' if a query can not be answered by a llm model (because they don't have realtime data) and requires up to date information like if the query is 'who is indian prime minister' respond with 'realtime who is indian prime minister', if the query is 'tell me about facebook's recent update.' respond with 'realtime tell me about facebook's recent update.', if the query is 'tell me news about coronavirus.' respond with 'realtime tell me news about coronavirus.', etc and if the query is asking about any individual or thing like if the query is 'who is akshay kumar' respond with 'realtime who is akshay kumar', etc.
+-> Respond with 'world_news' if the query is asking for a world news briefing, current global events, what is happening around the world, today's top news, news update, news summary, or a general news briefing like if the query is 'what's happening around the world?' respond with 'world_news', if the query is 'tell me today's news' respond with 'world_news', if the query is 'what's in the news?' respond with 'world_news', if the query is 'give me a news briefing' respond with 'world_news', if the query is 'what's the latest news?' respond with 'world_news', if the query is 'any news from india?' respond with 'world_news', if the query is 'what's happening?' respond with 'world_news', if the query is 'global news update' respond with 'world_news', if the query is 'top stories today' respond with 'world_news', etc.
 -> Respond with 'open (application name or website name)' if a query is asking to open any application like 'open facebook', 'open telegram', etc. but if the query is asking to open multiple applications, respond with 'open 1st application name, open 2nd application name' and so on.
 -> Respond with 'close (application name)' if a query is asking to close any application like 'close notepad', 'close facebook', etc. but if the query is asking to close multiple applications or websites, respond with 'close 1st application name, close 2nd application name' and so on.
 -> Respond with 'play (song name)' if a query is asking to play any song like 'play afsanay by ys', 'play let her go', etc. but if the query is asking to play multiple songs, respond with 'play 1st song name, play 2nd song name' and so on.
@@ -50,7 +51,21 @@ ChatHistory = [
     {"role": "User", "message": "chat with me."},
     {"role": "Chatbot", "message": "general chat with me."},
     {"role": "User", "message": "Hello friday, create an image of a lion."},
-    {"role": "Chatbot", "message": "general hello friday, generate image of a lion"}
+    {"role": "Chatbot", "message": "general hello friday, generate image of a lion"},
+    {"role": "User", "message": "what's happening around the world?"},
+    {"role": "Chatbot", "message": "world_news"},
+    {"role": "User", "message": "tell me today's news."},
+    {"role": "Chatbot", "message": "world_news"},
+    {"role": "User", "message": "give me a news briefing."},
+    {"role": "Chatbot", "message": "world_news"},
+    {"role": "User", "message": "what's in the news?"},
+    {"role": "Chatbot", "message": "world_news"},
+    {"role": "User", "message": "any news from india?"},
+    {"role": "Chatbot", "message": "world_news"},
+    {"role": "User", "message": "what's the latest news?"},
+    {"role": "Chatbot", "message": "world_news"},
+    {"role": "User", "message": "top stories today."},
+    {"role": "Chatbot", "message": "world_news"},
 ]
 
 def FirstLayerDMM(prompt: str = "test"):
@@ -69,26 +84,24 @@ def FirstLayerDMM(prompt: str = "test"):
     response = ""
 
     for event in stream:
-        # Print the event to see its structure
         if event[0] == 'text':
-            response = event[1] # Get the text response
+            response = event[1]
         
         if hasattr(event, 'event_type') and event.event_type == "text-generation":
             response += event.text
 
     response = response.replace("\n", "")
     response = response.split(",")
-
     response = [i.strip() for i in response]
 
     temp = []
 
     for task in response:
         for func in funcs:
-            if func in task: # More flexible check
+            if func in task:
                 temp.append(task)
-                break # Move to next task
-    
+                break
+
     response = temp
 
     if "(query)" in response:

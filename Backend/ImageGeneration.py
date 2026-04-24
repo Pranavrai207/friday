@@ -9,7 +9,8 @@ import base64
 import json
 
 # Set API URL and headers
-API_URL = "https://api-inference.huggingface.co/models/sd-legacy/stable-diffusion-v1-5"
+# Using FLUX.1-schnell which is the modern standard and supported by the router
+API_URL = "https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-schnell"
 hf_key = get_key('.env', 'HuggingFaceAPIKey')
 if hf_key:
     hf_key = hf_key.strip('"').strip("'")
@@ -19,10 +20,17 @@ headers = {"Authorization": f"Bearer {hf_key}"}
 if not os.path.exists("Data"):
     os.makedirs("Data")
 
+def clean_filename(filename):
+    # Remove invalid characters for Windows filenames
+    invalid_chars = '<>:"/\\|?*'
+    for char in invalid_chars:
+        filename = filename.replace(char, '')
+    return filename.replace(" ", "_").strip()
+
 def open_images(prompt):
     folder_path = r"Data"
-    prompt = prompt.replace(" ", "_")
-    files = [f"{prompt}{i}.jpg" for i in range(1, 5)]
+    safe_prompt = clean_filename(prompt)
+    files = [f"{safe_prompt}{i}.jpg" for i in range(1, 5)]
 
     for jpg_file in files:
         image_path = os.path.join(folder_path, jpg_file)
@@ -39,10 +47,15 @@ def open_images(prompt):
 async def query(payload):
     try:
         response = await asyncio.to_thread(requests.post, API_URL, headers=headers, json=payload)
-        response.raise_for_status()  # Raise an error for HTTP failures
-        return response.content
+        
+        if response.status_code == 200:
+            return response.content
+        else:
+            print(f"API Error ({response.status_code}): {response.text}")
+            return None
+            
     except requests.exceptions.RequestException as e:
-        print(f"Error querying API: {e}")
+        print(f"Connection Error: {e}")
         return None
 
 async def generate_images(prompt: str):
@@ -61,7 +74,8 @@ async def generate_images(prompt: str):
         if response_content:
             try:
                 # Save the raw bytes directly to file
-                filepath = fr"Data\{prompt.replace(' ', '_')}{i + 1}.jpg"
+                safe_prompt = clean_filename(prompt)
+                filepath = os.path.join("Data", f"{safe_prompt}{i + 1}.jpg")
                 with open(filepath, "wb") as f:
                     f.write(response_content)
                 print(f"Image {i + 1} saved to {filepath}")

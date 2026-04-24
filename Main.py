@@ -15,6 +15,7 @@ from Backend.Automation import Automation
 from Backend.SpeechToText import SpeechRecognition
 from Backend.Chatbot import ChatBot
 from Backend.TextToSpeech import TextToSpeech
+from Backend.WorldNews import GetWorldNews
 from dotenv import dotenv_values
 from asyncio import run
 from time import sleep
@@ -34,6 +35,13 @@ DefaultMessage = f""" {Username}: Hello {Assistantname}, How are you?
 functions = ["open", "close", "play", "system", "content", "google search", "youtube search"]
 subprocess_list = []
 
+# World news trigger phrases for fallback detection
+WORLD_NEWS_TRIGGERS = [
+    "what's happening", "whats happening", "world news", "news today",
+    "news briefing", "what's in the news", "whats in the news",
+    "around the world", "current events", "latest news", "top news",
+    "tell me the news", "any news", "news update", "global news"
+]
 
 
 # Ensure a default chat log exists if no chats are logged
@@ -64,8 +72,6 @@ def ReadChatLogJson():
         return []
 
 # Integrate chat logs into a readable format
-
-
 def ChatLogIntegration():
     json_data = ReadChatLogJson()
     formatted_chatlog = ""
@@ -76,7 +82,7 @@ def ChatLogIntegration():
             formatted_chatlog += f"{Assistantname}: {entry['content']}\n"
 
     # Ensure the Temp directory exists
-    temp_dir_path = TempDirectoryPath('')  # Get the directory path
+    temp_dir_path = TempDirectoryPath('')
     if not os.path.exists(temp_dir_path):
         os.makedirs(temp_dir_path)
 
@@ -117,9 +123,15 @@ def MainExecution():
 
         print(f"\nDecision: {Decision}\n")
 
+        # ── Fallback: catch world news intent if DMM missed it ──
+        query_lower = Query.lower()
+        if not any("world_news" in d for d in Decision):
+            if any(trigger in query_lower for trigger in WORLD_NEWS_TRIGGERS):
+                Decision.append("world_news")
+                print("WorldNews fallback triggered.")
+
         G = any([i for i in Decision if i.startswith("general")])
         R = any([i for i in Decision if i.startswith("realtime")])
-
 
         Merged_query = " and ".join(
             [" ".join(i.split()[1:]) for i in Decision if i.startswith("general") or i.startswith("realtime")]
@@ -139,7 +151,6 @@ def MainExecution():
         if ImageExecution:
             with open(r'Frontend\Files\ImageGeneration.data', "w") as file:
                 file.write(f"{ImageGenerationQuery},True")
-
             try:
                 p1 = subprocess.Popen(
                     ['python', r"Backend\ImageGeneration.py"],
@@ -156,6 +167,7 @@ def MainExecution():
             SetAsssistantStatus("Answering...")
             TextToSpeech(Answer)
             return True
+
         else:
             for queries in Decision:
                 if "general" in queries:
@@ -166,6 +178,7 @@ def MainExecution():
                     SetAsssistantStatus("Answering...")
                     TextToSpeech(Answer)
                     return True
+
                 elif "realtime" in queries:
                     SetAsssistantStatus("Searching...")
                     QueryFinal = queries.replace("realtime", "")
@@ -174,6 +187,22 @@ def MainExecution():
                     SetAsssistantStatus("Answering...")
                     TextToSpeech(Answer)
                     return True
+
+                elif "world_news" in queries:
+                    SetAsssistantStatus("Scanning world intel...")
+                    # Detect topic from the original spoken query
+                    topic = (
+                        "india"    if "india"    in query_lower else
+                        "tech"     if "tech"     in query_lower or "technology" in query_lower else
+                        "business" if "business" in query_lower or "market"     in query_lower else
+                        "world"
+                    )
+                    Answer = GetWorldNews(topic=topic)
+                    ShowTextToScreen(f"{Assistantname}: {Answer}")
+                    SetAsssistantStatus("Answering...")
+                    TextToSpeech(Answer)
+                    return True
+
                 elif "exit" in queries:
                     QueryFinal = "Okay, Bye!"
                     Answer = ChatBot(QueryModifier(QueryFinal))
@@ -181,6 +210,7 @@ def MainExecution():
                     SetAsssistantStatus("Answering...")
                     TextToSpeech(Answer)
                     os._exit(1)
+
     except Exception as e:
         print(f"Error in MainExecution: {e}")
 
@@ -205,8 +235,6 @@ def FirstThread():
             print(f"Error in FirstThread: {e}")
             sleep(1)
 
-
-
 # Thread for GUI execution
 def SecondThread():
     try:
@@ -217,8 +245,7 @@ def SecondThread():
 # Entry point
 if __name__ == "__main__":
     InitialExecution()
-   
+
     thread1 = threading.Thread(target=FirstThread, daemon=True)
     thread1.start()
     SecondThread()
-    
