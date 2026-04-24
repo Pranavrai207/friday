@@ -58,20 +58,40 @@ with open("Data/Voice.html", "w", encoding="utf-8") as f:
 
 # Construct local file URL
 current_dir = os.getcwd()
-Link = f"{current_dir}/Data/Voice.html"
+Link = os.path.abspath("Data/Voice.html").replace("\\", "/")
 
-# Set Chrome options for Chrome Beta
+# Set Chrome options
 chrome_options = Options()
-chrome_options.binary_location = r"C:\Program Files\Google\Chrome Beta\Application\chrome.exe"  # <-- Chrome Beta path
+# Find Chrome path
+chrome_stable_paths = [
+    r"C:\Program Files\Google\Chrome\Application\chrome.exe",
+    r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
+    os.path.expanduser(r"~\AppData\Local\Google\Chrome\Application\chrome.exe")
+]
+chrome_path = None
+for path in chrome_stable_paths:
+    if os.path.exists(path):
+        chrome_path = path
+        break
+
+if chrome_path:
+    chrome_options.binary_location = chrome_path
+
 chrome_options.add_argument("--use-fake-ui-for-media-stream")
 chrome_options.add_argument("--use-fake-device-for-media-stream")
 chrome_options.add_argument("--headless=new")  # Modern headless mode
 chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.142.86 Safari/537.36")
 
-# Set manually downloaded ChromeDriver for Chrome Beta
-chrome_driver_path = r"D:\VARSI\chromedriver-win64 (2)\chromedriver-win64\chromedriver.exe"
-service = Service(executable_path=chrome_driver_path)
-driver = webdriver.Chrome(service=service, options=chrome_options)
+# Global driver variable
+driver = None
+
+def InitializeDriver():
+    global driver
+    if driver is None:
+        # Use webdriver-manager for ChromeDriver
+        from webdriver_manager.chrome import ChromeDriverManager
+        service = Service(ChromeDriverManager().install())
+        driver = webdriver.Chrome(service=service, options=chrome_options)
 
 # Setup temp status path
 TempDirPath = os.path.join(current_dir, "Frontend", "Files")
@@ -104,6 +124,8 @@ def UniversalTranslator(Text):
     return english_translation
 
 def SpeechRecognition():
+    global driver
+    InitializeDriver()
     driver.get("file:///" + Link)
     driver.find_element(By.ID, "start").click()
 

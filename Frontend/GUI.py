@@ -66,10 +66,10 @@ def GetAssistantStatus():
     
 # Define placeholders for the missing functions
 def MicButtonInitiated():
-    SetMicrophoneStatus("False")
+    SetMicrophoneStatus("True")
 
 def MicButtonClosed():
-    SetMicrophoneStatus("True")
+    SetMicrophoneStatus("False")
 
 def GraphicsDirectoryPath(Filename):
     path = rf'{GraphicsDirPath}\{Filename}'

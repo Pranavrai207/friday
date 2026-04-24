@@ -9,7 +9,7 @@ env_vars = dotenv_values(".env")
 
 Username = env_vars.get("Username")
 Assistantname = env_vars.get("Assistantname")
-GroqAPIKey = env_vars.get("GroqAPIKey")
+GroqAPIKey = env_vars.get("GroqAPIKey").strip('"').strip("'")
 
 client = Groq(api_key=GroqAPIKey)
 
@@ -67,7 +67,7 @@ def ChatBot(Query):
         messages.append({"role": "user", "content": f"{Query}"})
 
         completion = client.chat.completions.create(
-            model="llama3-70b-8192",
+            model="llama-3.3-70b-versatile",
             messages=SystemChatBot + [{"role": "system", "content": RealtimeInformation()}] + messages,
             max_tokens=1024,
             temperature=0.7,

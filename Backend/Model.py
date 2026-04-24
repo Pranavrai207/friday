@@ -3,14 +3,14 @@ from rich import print
 from dotenv import dotenv_values
 
 env_vars = dotenv_values(".env")
-CohereAPIKey = env_vars["CohereAPIKey"]
+CohereAPIKey = env_vars["CohereAPIKey"].strip('"').strip("'")
 
 co = cohere.Client(api_key=CohereAPIKey)
 
 funcs = [
-    "exit", "general", "realtime", "ohepen", "close", "play",
-    "generate image", "system", "content", "google search",
-    "youtube search", "reminder"
+    "exit", "general", "realtime", "open", "close", "play",
+    "generate image", "create image", "draw image", "system", "content", 
+    "google search", "youtube search", "reminder"
 ]
 
 messages = []
@@ -48,14 +48,16 @@ ChatHistory = [
     {"role": "User", "message": "what is today's date and by the way remind me that i have a dancing performance on 5th at 11pm "},
     {"role": "Chatbot", "message": "general what is today's date, reminder 11:00pm 5th aug dancing performance"},
     {"role": "User", "message": "chat with me."},
-    {"role": "Chatbot", "message": "general chat with me."}
+    {"role": "Chatbot", "message": "general chat with me."},
+    {"role": "User", "message": "Hello friday, create an image of a lion."},
+    {"role": "Chatbot", "message": "general hello friday, generate image of a lion"}
 ]
 
 def FirstLayerDMM(prompt: str = "test"):
     messages.append({"role": "user", "content": f"{prompt}"})
 
     stream = co.chat(
-        model='command-r-plus',
+        model='command-r-plus-08-2024',
         message=prompt,
         temperature=0.7,
         chat_history=ChatHistory,
@@ -83,8 +85,9 @@ def FirstLayerDMM(prompt: str = "test"):
 
     for task in response:
         for func in funcs:
-            if task.startswith(func):
+            if func in task: # More flexible check
                 temp.append(task)
+                break # Move to next task
     
     response = temp
 

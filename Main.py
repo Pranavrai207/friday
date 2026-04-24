@@ -126,7 +126,7 @@ def MainExecution():
         )
 
         for queries in Decision:
-            if "generate" in queries:
+            if "generate" in queries or "image" in queries or "draw" in queries or "create" in queries:
                 ImageGenerationQuery = str(queries)
                 ImageExecution = True
 
@@ -143,10 +143,7 @@ def MainExecution():
             try:
                 p1 = subprocess.Popen(
                     ['python', r"Backend\ImageGeneration.py"],
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    stdin=subprocess.PIPE,
-                    shell=False,
+                    shell=False
                 )
                 subprocess_list.append(p1)
             except Exception as e:
@@ -192,25 +189,21 @@ def FirstThread():
     while True:
         try:
             CurrentStatus = GetMicrophoneStatus()
-            print(f"Current Microphone Status: {CurrentStatus}")  # Debugging
 
-            if CurrentStatus.lower() == "true":  # Case-insensitive comparison
-                print("Executing MainExecution")  # Debugging
+            if CurrentStatus.lower() == "true":
                 MainExecution()
             elif CurrentStatus.lower() == "false":
                 AIStatus = GetAssistantStatus()
-                print(f"Current Assistant Status: {AIStatus}")  # Debugging
 
                 if "Available..." in AIStatus:
                     sleep(0.1)
                 else:
-                    print("Setting Assistant Status to 'Available...'")  # Debugging
                     SetAsssistantStatus("Available...")
             else:
-                print("Unexpected Microphone Status value. Defaulting to 'False'.")  # Debugging
+                sleep(0.1)
         except Exception as e:
             print(f"Error in FirstThread: {e}")
-            sleep(1)  # Avoid infinite rapid errors
+            sleep(1)
 
 
 

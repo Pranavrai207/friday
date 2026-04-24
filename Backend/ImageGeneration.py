@@ -9,8 +9,11 @@ import base64
 import json
 
 # Set API URL and headers
-API_URL = "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0"
-headers = {"Authorization": f"Bearer {get_key('.env', 'HuggingFaceAPIKey')}"}
+API_URL = "https://api-inference.huggingface.co/models/sd-legacy/stable-diffusion-v1-5"
+hf_key = get_key('.env', 'HuggingFaceAPIKey')
+if hf_key:
+    hf_key = hf_key.strip('"').strip("'")
+headers = {"Authorization": f"Bearer {hf_key}"}
 
 # Ensure the Data folder exists
 if not os.path.exists("Data"):
@@ -57,22 +60,19 @@ async def generate_images(prompt: str):
     for i, response_content in enumerate(responses):
         if response_content:
             try:
-                response_json = json.loads(response_content)
-                if "images" in response_json:
-                    # Assuming the response contains base64-encoded image data
-                    image_base64 = response_json["images"][0]
-                    image_bytes = base64.b64decode(image_base64)
-
-                    with open(fr"Data\{prompt.replace(' ', '_')}{i + 1}.jpg", "wb") as f:
-                        f.write(image_bytes)
-                else:
-                    print(f"Unexpected API response format: {response_json}")
+                # Save the raw bytes directly to file
+                filepath = fr"Data\{prompt.replace(' ', '_')}{i + 1}.jpg"
+                with open(filepath, "wb") as f:
+                    f.write(response_content)
+                print(f"Image {i + 1} saved to {filepath}")
             except Exception as e:
                 print(f"Error saving image {i + 1}: {e}")
 
 def GenerateImages(prompt: str):
-    asyncio.run(generate_images(prompt))
-    open_images(prompt)
+    # Clean prompt: remove 'generate', 'image', 'of'
+    cleaned_prompt = prompt.replace("generate", "").replace("image", "").replace("of", "").strip()
+    asyncio.run(generate_images(cleaned_prompt))
+    open_images(cleaned_prompt)
 
 # Main execution loop
 while True:

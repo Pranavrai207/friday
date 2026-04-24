@@ -1,0 +1,98 @@
+[
+    {
+        "role": "user",
+        "content": "Hello."
+    },
+    {
+        "role": "assistant",
+        "content": "Hello, I'm Friday, your AI chatbot. How can I assist you today?"
+    },
+    {
+        "role": "user",
+        "content": "Physics and quantum mechanics."
+    },
+    {
+        "role": "assistant",
+        "content": "Those are fascinating subjects. What would you like to know about physics and quantum mechanics?"
+    },
+    {
+        "role": "user",
+        "content": "What is quantum mechanics?"
+    },
+    {
+        "role": "assistant",
+        "content": "Quantum mechanics is a branch of physics that studies the behavior of matter and energy at an atomic and subatomic level, where the rules of classical physics do not apply. It explains phenomena such as wave-particle duality, superposition, and entanglement."
+    },
+    {
+        "role": "user",
+        "content": "What is 2 + 2 into 3 + 4?"
+    },
+    {
+        "role": "assistant",
+        "content": "First, calculate 2 + 2, which equals 4. Then, calculate 3 + 4, which equals 7. Multiply 4 by 7, which equals 28."
+    },
+    {
+        "role": "user",
+        "content": "Today's gold price."
+    },
+    {
+        "role": "assistant",
+        "content": "Unfortunately, I don't have the current data on the gold price as the search results for 'Today's gold price' are empty. However, I can suggest checking a reliable financial website or a market update for the most recent and accurate gold price."
+    },
+    {
+        "role": "user",
+        "content": "New friday."
+    },
+    {
+        "role": "assistant",
+        "content": "It's Friday, April 24, 2026."
+    },
+    {
+        "role": "user",
+        "content": "Hello friday."
+    },
+    {
+        "role": "assistant",
+        "content": "Hello, how can I assist you today?"
+    },
+    {
+        "role": "user",
+        "content": "Hello friday."
+    },
+    {
+        "role": "assistant",
+        "content": "Hello, what's on your mind?"
+    },
+    {
+        "role": "user",
+        "content": "Main jo floyam."
+    },
+    {
+        "role": "assistant",
+        "content": "I don't understand what you're trying to say. Could you please rephrase or provide more context?"
+    },
+    {
+        "role": "user",
+        "content": "Hello friday."
+    },
+    {
+        "role": "assistant",
+        "content": "Hello again, is there something I can help you with?"
+    },
+    {
+        "role": "user",
+        "content": "2 + 2."
+    },
+    {
+        "role": "assistant",
+        "content": "The answer is 4."
+    },
+    {
+        "role": "user",
+        "content": "Baby boy."
+    },
+    {
+        "role": "assistant",
+        "content": "Congratulations, that's wonderful news."
+    }
+]
