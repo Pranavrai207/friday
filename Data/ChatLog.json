@@ -398,5 +398,13 @@
     {
         "role": "assistant",
         "content": "Artificial intelligence (AI) refers to the development of computer systems that can perform tasks that typically require human intelligence, such as learning, problem-solving, and decision-making. AI involves the use of algorithms, data, and computer power to enable machines to think and act like humans."
+    },
+    {
+        "role": "user",
+        "content": "Zindagi."
+    },
+    {
+        "role": "assistant",
+        "content": "It seems like you're referencing the Hindi word for \"life\". Zindagi is a term often used in Indian culture to refer to the journey of life, experiences, and emotions."
     }
 ]
