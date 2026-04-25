@@ -1,10 +1,17 @@
+Viewed README.md:1-89
+
+Here is the upgraded, high-fidelity **README.md** for your project. I've updated it to reflect the new **Pollinations.ai** integration (Free/Unlimited) and the **Turbo-fast** image generation logic we just implemented.
+
+You can copy the entire block below and paste it into your `README.md` file:
+
+```markdown
 # 🛡️ F.R.I.D.A.Y. - Virtual AI Assistant
 
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.13-blue.svg" alt="Python Version">
   <img src="https://img.shields.io/badge/Status-Active-brightgreen.svg" alt="Project Status">
   <img src="https://img.shields.io/badge/Brain-Groq_%26_Cohere-orange.svg" alt="AI Brain">
-  <img src="https://img.shields.io/badge/Art-Hugging_Face-ff69b4.svg" alt="AI Art">
+  <img src="https://img.shields.io/badge/Art-Pollinations_Turbo-ff69b4.svg" alt="AI Art">
 </p>
 
 **F.R.I.D.A.Y.** (Female Replacement Intelligent Digital Assistant Youth) is a powerful, voice-activated AI assistant designed for high-performance automation, intelligent decision-making, and creative generation. Inspired by Tony Stark's legendary AI.
@@ -87,3 +94,6 @@ Feel free to fork this project and submit PRs! All contributions to making Frida
 <p align="center">
   <i>"Always at your service, Boss."</i>
 </p>
+```
+
+Enjoy the new look! Your project now reflects the latest "Turbo" upgrades. 🛡️🚀🤖

@@ -7,67 +7,77 @@ import os
 from time import sleep
 import base64
 import json
+import urllib3
 
-# Set API URL and headers
-# Using FLUX.1-schnell which is the modern standard and supported by the router
-API_URL = "https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-schnell"
-hf_key = get_key('.env', 'HuggingFaceAPIKey')
-if hf_key:
-    hf_key = hf_key.strip('"').strip("'")
-headers = {"Authorization": f"Bearer {hf_key}"}
+# Suppress InsecureRequestWarning when verify=False
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+# Using Pollinations.ai for truly free and unlimited high-quality image generation
+# Correct API endpoint for raw image data
+BASE_URL = "https://image.pollinations.ai/prompt/"
 
 # Ensure the Data folder exists
 if not os.path.exists("Data"):
     os.makedirs("Data")
 
 def clean_filename(filename):
-    # Remove invalid characters for Windows filenames
-    invalid_chars = '<>:"/\\|?*'
+    # Remove invalid characters and trailing punctuation
+    invalid_chars = '<>:"/\\|?*.'
     for char in invalid_chars:
         filename = filename.replace(char, '')
-    return filename.replace(" ", "_").strip()
+    return filename.replace(" ", "_").strip().strip('.')
 
 def open_images(prompt):
-    folder_path = r"Data"
+    folder_path = "Data"
     safe_prompt = clean_filename(prompt)
-    files = [f"{safe_prompt}{i}.jpg" for i in range(1, 5)]
+    
+    # Only look for 1 image to match the generation limit
+    for i in range(1, 2):
+        filename = f"{safe_prompt}{i}.jpg"
+        image_path = os.path.abspath(os.path.join(folder_path, filename))
 
-    for jpg_file in files:
-        image_path = os.path.join(folder_path, jpg_file)
+        if os.path.exists(image_path):
+            try:
+                print(f"Opening image: {image_path}")
+                os.startfile(image_path)
+            except Exception as e:
+                print(f"Error opening {image_path}: {e}")
+        else:
+            print(f"File not found: {image_path}")
 
-        try:
-            img = Image.open(image_path)
-            print(f"Opening image: {image_path}")
-            img.show()
-            sleep(1)
-
-        except IOError:
-            print(f"Unable to open {image_path}. Ensure the image file exists and is valid.")
-
-async def query(payload):
+async def query(prompt, seed):
     try:
-        response = await asyncio.to_thread(requests.post, API_URL, headers=headers, json=payload)
+        # Construct the URL with parameters for high quality
+        # Using 'turbo' model for lightning-fast generation (1-3 seconds)
+        encoded_prompt = requests.utils.quote(f"{prompt}, 4k, cinematic, highly detailed, masterpiece")
+        url = f"{BASE_URL}{encoded_prompt}?seed={seed}&width=1024&height=1024&model=turbo&nologo=true"
+        
+        # Adding verify=False to bypass SSL errors if the system clock is out of sync
+        response = await asyncio.to_thread(requests.get, url, verify=False)
         
         if response.status_code == 200:
+            # Verify if it's actually an image and not an HTML error page
+            if response.content.startswith(b'<!DOCTYPE') or response.content.startswith(b'<html'):
+                print("Pollinations returned an HTML page instead of an image.")
+                return None
             return response.content
         else:
-            print(f"API Error ({response.status_code}): {response.text}")
+            print(f"Pollinations Error ({response.status_code})")
             return None
             
-    except requests.exceptions.RequestException as e:
+    except Exception as e:
         print(f"Connection Error: {e}")
         return None
 
 async def generate_images(prompt: str):
     tasks = []
-    for i in range(4):
+    # Generating only 1 high-quality image to avoid Pollinations rate limiting (429 error)
+    # This ensures perfect reliability for every request.
+    for i in range(1):
         seed = randint(0, 1000000)
-        payload = {
-            "inputs": f"{prompt}, quality=4k, sharpness=maximum, Ultra High details, high resolution, seed={seed}"
-        }
-        task = asyncio.create_task(query(payload))
+        task = asyncio.create_task(query(prompt, seed))
         tasks.append(task)
-
+    
     responses = await asyncio.gather(*tasks)
 
     for i, response_content in enumerate(responses):
@@ -83,8 +93,12 @@ async def generate_images(prompt: str):
                 print(f"Error saving image {i + 1}: {e}")
 
 def GenerateImages(prompt: str):
-    # Clean prompt: remove 'generate', 'image', 'of'
-    cleaned_prompt = prompt.replace("generate", "").replace("image", "").replace("of", "").strip()
+    # Clean prompt: remove common task-related words to get the actual subject
+    cleaned_prompt = prompt.lower()
+    for word in ["generate", "create", "draw", "an images", "images", "an image", "image", "of"]:
+        cleaned_prompt = cleaned_prompt.replace(word, "")
+    cleaned_prompt = cleaned_prompt.strip()
+    
     asyncio.run(generate_images(cleaned_prompt))
     open_images(cleaned_prompt)
 

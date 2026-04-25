@@ -117,14 +117,44 @@ def MainExecution():
 
         SetAsssistantStatus("Listening...")
         Query = SpeechRecognition()
+        query_lower = Query.lower()
         ShowTextToScreen(f"{Username}: {Query}")
         SetAsssistantStatus("Thinking...")
         Decision = FirstLayerDMM(Query)
 
+        # ── Logic-based Response Handling ──
+        if isinstance(Decision, str):
+            Answer = Decision
+            ShowTextToScreen(f"{Assistantname}: {Answer}")
+            SetAsssistantStatus("Answering...")
+            TextToSpeech(Answer)
+            return True
+
+        # Special World News Trigger from Router
+        if "world_news_monitor" in Decision:
+            Answer = "Opening World Intelligence Monitor, boss."
+            ShowTextToScreen(f"{Assistantname}: {Answer}")
+            SetAsssistantStatus("Answering...")
+            TextToSpeech(Answer)
+            
+            # Now actually fetch the news
+            SetAsssistantStatus("Scanning world intel...")
+            # Detect topic from the original spoken query
+            topic = (
+                "india"    if "india"    in query_lower else
+                "tech"     if "tech"     in query_lower or "technology" in query_lower else
+                "business" if "business" in query_lower or "market"     in query_lower else
+                "world"
+            )
+            Answer = GetWorldNews(topic=topic)
+            ShowTextToScreen(f"{Assistantname}: {Answer}")
+            SetAsssistantStatus("Answering...")
+            TextToSpeech(Answer)
+            return True
+
         print(f"\nDecision: {Decision}\n")
 
-        # ── Fallback: catch world news intent if DMM missed it ──
-        query_lower = Query.lower()
+        # ── Fallback: catch world news intent if DMM missed it (legacy check) ──
         if not any("world_news" in d for d in Decision):
             if any(trigger in query_lower for trigger in WORLD_NEWS_TRIGGERS):
                 Decision.append("world_news")
@@ -150,13 +180,31 @@ def MainExecution():
 
         if ImageExecution:
             with open(r'Frontend\Files\ImageGeneration.data', "w") as file:
-                file.write(f"{ImageGenerationQuery},True")
+                # Clean the prompt for the generation script
+                # Remove common prefixes from the decision string
+                clean_query = ImageGenerationQuery
+                for prefix in ["generate image", "create image", "draw image", "generate", "create", "draw", "general", "realtime"]:
+                    clean_query = clean_query.replace(prefix, "")
+                clean_query = clean_query.replace("friday", "").strip()
+                
+                file.write(f"{clean_query},True")
+                
             try:
                 p1 = subprocess.Popen(
                     ['python', r"Backend\ImageGeneration.py"],
                     shell=False
                 )
                 subprocess_list.append(p1)
+                
+                # Hardcoded local response to avoid external API calls for image tasks
+                Answer = "Creating the images, Boss. Please wait a moment."
+                ShowTextToScreen(f"{Assistantname}: {Answer}")
+                SetAsssistantStatus("Answering...")
+                TextToSpeech(Answer)
+                
+                # ALWAYS return here for image tasks to prevent Groq from interjecting
+                return True
+                    
             except Exception as e:
                 print(f"Error starting ImageGeneration.py: {e}")
 
