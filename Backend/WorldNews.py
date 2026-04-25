@@ -326,8 +326,8 @@ body::before {{ content:''; position:fixed; inset:0; background:repeating-linear
 
 #main-container {{ position:fixed; top:52px; left:0; right:0; bottom:64px; display:flex; }}
 #left-pane {{ width:45%; position:relative; border-right:1px solid var(--border-b); background:#06090d; overflow: hidden; }}
-#map {{ width:100%; height:100%; z-index:1; }}
-#scanner-line {{ position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--alert); box-shadow: 0 0 15px var(--alert); z-index: 3; animation: scanMap 4s linear infinite; }}
+#map {{ width:100%; height:100%; z-index:1; filter: brightness(1.4) contrast(1.1); }}
+#scanner-line {{ position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--alert); box-shadow: 0 0 15px var(--alert); z-index: 3; animation: scanMap 4s linear forwards; }}
 @keyframes scanMap {{ 0% {{ top:0; opacity:0; }} 10% {{ opacity:1; }} 90% {{ opacity:1; }} 100% {{ top:100%; opacity:0; }} }}
 #summary-box {{ position:absolute; bottom:15px; left:15px; width:calc(100% - 30px); background:rgba(6,9,13,0.85); border:1px solid var(--border-b); border-radius:4px; padding:12px 16px; z-index:500; backdrop-filter:blur(8px); }}
 .summary-label {{ font-family:var(--display); font-size:9px; letter-spacing:3px; color:var(--blue); margin-bottom:6px; }}
@@ -369,8 +369,50 @@ body::before {{ content:''; position:fixed; inset:0; background:repeating-linear
 @keyframes tickerScroll {{ from {{transform:translateX(0);}} to {{transform:translateX(-50%);}} }}
 .ticker-item {{ font-size:11px; padding:0 30px; }}
 
-.friday-marker {{ width:12px; height:12px; background:var(--cyan); border-radius:50%; border:2px solid rgba(0,212,255,.5); animation:markerRing 2s infinite; }}
-@keyframes markerRing {{ 0% {{box-shadow:0 0 0 0 rgba(0,212,255,.8);}} 70% {{box-shadow:0 0 0 15px rgba(0,212,255,0);}} 100% {{box-shadow:0 0 0 0 rgba(0,212,255,0);}} }}
+.friday-marker {{ 
+    width:10px; height:10px; background:var(--cyan); border-radius:50%; 
+    box-shadow: 0 0 10px var(--cyan), 0 0 20px rgba(0,212,255,0.4);
+    position: relative;
+}}
+.friday-marker::before {{
+    content: ''; position: absolute; inset: -10px; border: 1px solid var(--cyan);
+    border-radius: 50%; animation: markerPulse 2s ease-out infinite; opacity: 0;
+}}
+.friday-marker::after {{
+    content: ''; position: absolute; inset: -20px; border: 1px solid rgba(0,212,255,0.3);
+    border-radius: 50%; animation: markerPulse 2s ease-out infinite 0.5s; opacity: 0;
+}}
+@keyframes markerPulse {{
+    0% {{ transform: scale(0.5); opacity: 0.8; }}
+    100% {{ transform: scale(2.5); opacity: 0; }}
+}}
+
+/* Radar Sweep Effect */
+#radar-container {{ position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 2; }}
+.radar-sweep {{
+    position: absolute; top: 50%; left: 50%; width: 200%; height: 200%;
+    transform: translate(-50%, -50%);
+    background: conic-gradient(from 0deg, transparent 0%, rgba(0, 212, 255, 0.12) 10%, transparent 15%);
+    animation: radarRotate 8s linear infinite;
+}}
+@keyframes radarRotate {{ from {{ transform: translate(-50%, -50%) rotate(0deg); }} to {{ transform: translate(-50%, -50%) rotate(360deg); }} }}
+
+/* Leaflet Tooltip HUD Style */
+.leaflet-tooltip-friday {{
+    background: rgba(8, 12, 18, 0.9) !important;
+    border: 1px solid var(--blue) !important;
+    color: var(--cyan) !important;
+    font-family: var(--mono) !important;
+    font-size: 10px !important;
+    padding: 6px 10px !important;
+    border-radius: 0 !important;
+    box-shadow: 0 0 15px rgba(0,168,255,0.2) !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}}
+.leaflet-tooltip-left:before {{ border-left-color: var(--blue) !important; }}
+.leaflet-tooltip-right:before {{ border-right-color: var(--blue) !important; }}
+
 </style>
 </head>
 <body>
@@ -385,6 +427,7 @@ body::before {{ content:''; position:fixed; inset:0; background:repeating-linear
 <div id="main-container">
     <div id="left-pane">
         <div id="map"></div>
+        <div id="radar-container"><div class="radar-sweep"></div></div>
         <div id="scanner-line"></div>
         <div id="summary-box"><div class="summary-label">INTEL SUMMARY</div><div class="summary-text" id="summary-text"></div></div>
     </div>
@@ -433,7 +476,14 @@ function tick() {{ const n=new Date(), p=v=>String(v).padStart(2,'0'); document.
 setInterval(tick, 1000); tick();
 const map = L.map('map', {{zoomControl:false, attributionControl:false, center:[20, 0], zoom:2.1}});
 L.tileLayer('https://{{s}}.basemaps.cartocdn.com/dark_all/{{z}}/{{x}}/{{y}}{{r}}.png').addTo(map);
-MARKERS.forEach((m,i)=>{{ const icon=L.divIcon({{className:'', html:`<div class="friday-marker"></div>`, iconSize:[12,12]}}); L.marker([m.lat,m.lng],{{icon}}).addTo(map).bindTooltip(m.headline); }});
+MARKERS.forEach((m,i)=>{{ 
+    const icon=L.divIcon({{className:'', html:`<div class="friday-marker"></div>`, iconSize:[12,12]}}); 
+    L.marker([m.lat,m.lng],{{icon}}).addTo(map).bindTooltip(m.headline, {{
+        className: 'leaflet-tooltip-friday',
+        direction: 'top',
+        offset: [0, -10]
+    }}); 
+}});
 
 const feed=document.getElementById('news-feed'); 
 ARTICLES.forEach((a,i)=>{{ 
