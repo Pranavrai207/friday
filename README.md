@@ -7,28 +7,29 @@
   <img src="https://img.shields.io/badge/Art-Hugging_Face-ff69b4.svg" alt="AI Art">
 </p>
 
-**F.R.I.D.A.Y.** (Female Replacement Intelligent Digital Assistant Youth) is a powerful, voice-activated AI assistant designed for high-performance automation, intelligent decision-making, and creative generation.
+**F.R.I.D.A.Y.** (Female Replacement Intelligent Digital Assistant Youth) is a powerful, voice-activated AI assistant designed for high-performance automation, intelligent decision-making, and creative generation. Inspired by Tony Stark's legendary AI.
 
 ---
 
 ## 🚀 Key Features
 
-*   **🧠 First-Layer DMM (Decision Making Model)**: Powered by Cohere, Friday analyzes user intent in real-time to route requests to the appropriate backend module.
-*   **💬 High-Speed Chat**: Integrated with Groq's Llama-3.3-70b-versatile model for lightning-fast, natural conversations.
-*   **🎨 AI Art Studio**: Generates high-quality images using the Hugging Face Inference API (Stable Diffusion 2.1 / FLUX).
-*   **🌐 Real-time Web Search**: Perform live Google searches and get synthesized answers instantly.
-*   **🎙️ Voice Interaction**: Seamless voice-to-text (STT) and text-to-speech (TTS) integration with a sleek GUI.
-*   **⚡ Optimized Startup**: Implements lazy-loading for heavy drivers to ensure instant application launch.
+*   **🧠 First-Layer DMM (Decision Making Model)**: Powered by Cohere, Friday analyzes user intent in real-time to route requests (General, Realtime, Image, etc.).
+*   **⚡ Turbo Art Studio**: Generates high-quality AI images in **under 3 seconds** using the Pollinations.ai Turbo engine. No API credits or keys required!
+*   **📡 World News Monitor**: A high-fidelity news dashboard that fetches the latest global headlines with video previews and instant playback.
+*   **💬 High-Speed Chat**: Integrated with Groq's Llama-3.3-70b model for lightning-fast, natural conversations with a Stark-like persona.
+*   **🎙️ Smart Voice Sync**: Seamless voice-to-text (STT) and text-to-speech (TTS) integration with automated SSL bypass for maximum reliability.
+*   **🌐 Real-time Web Search**: Perform live Google searches and get synthesized answers instantly from the latest web data.
 
 ---
 
 ## 🛠️ Tech Stack
 
 - **Core**: Python 3.13
-- **LLMs**: Groq (Llama 3.3), Cohere (Command R+)
-- **Image Generation**: Hugging Face Inference API
-- **GUI**: Tkinter / Pygame
-- **Speech**: Selenium-based high-accuracy recognition
+- **Intelligence**: Groq (Llama 3.3), Cohere (Command R+)
+- **Image Generation**: Pollinations.ai (Flux-Turbo Engine)
+- **GUI**: Custom Tkinter / CSS-in-HTML Dashboards
+- **Speech**: Edge-TTS & Selenium-based Recognition
+- **Networking**: Asyncio & SSL-robust Requests
 
 ---
 
@@ -36,8 +37,8 @@
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/Pranavrai207/friday.git
-cd friday
+git clone https://github.com/Pranavrai207/friday-ai.git
+cd friday-ai
 ```
 
 ### 2. Install Dependencies
@@ -46,16 +47,16 @@ pip install -r Requirements.txt
 ```
 
 ### 3. Configure Environment Variables
-Create a `.env` file in the root directory and add your API keys:
+Create a `.env` file in the root directory and add your keys:
 ```env
 CohereAPIKey = "YOUR_COHERE_KEY"
 GroqAPIKey = "YOUR_GROQ_KEY"
-HuggingFaceAPIKey = "YOUR_HF_KEY"
 Username = "Stark"
 Assistantname = "Friday"
 InputLanguage = "en"
 AssistantVoice = "en-US-JennyNeural"
 ```
+*(Note: No HuggingFace key needed for images anymore!)*
 
 ### 4. Run Friday
 Simply execute the batch file:
@@ -67,14 +68,14 @@ friday.bat
 
 ## 📂 Project Structure
 
-- `Main.py`: The central orchestrator and GUI.
+- `Main.py`: The central orchestrator and intent-based GUI.
 - `Backend/`:
-    - `Model.py`: Intent classification (DMM).
-    - `Chatbot.py`: Main conversational logic.
-    - `ImageGeneration.py`: Hugging Face API integration.
-    - `RealtimeSearchEngine.py`: Google Search & data extraction.
-    - `SpeechToText.py` & `TextToSpeech.py`: Voice handling.
-- `Data/`: Stores chat logs and generated images.
+    - `ImageGeneration.py`: Turbo-speed Pollinations.ai integration.
+    - `WorldNews.py`: High-fidelity news dashboard logic.
+    - `Chatbot.py`: Groq-powered Stark persona logic.
+    - `Model.py`: Cohere-powered Intent Classifier (DMM).
+    - `TextToSpeech.py`: Edge-TTS voice handling.
+- `Data/`: Stores your generated images and chat history.
 
 ---
 
@@ -86,3 +87,6 @@ Feel free to fork this project and submit PRs! All contributions to making Frida
 <p align="center">
   <i>"Always at your service, Boss."</i>
 </p>
+```
+
+Enjoy the new look! Your project now reflects the latest "Turbo" upgrades. 🛡️🚀🤖
