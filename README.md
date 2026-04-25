@@ -87,6 +87,3 @@ Feel free to fork this project and submit PRs! All contributions to making Frida
 <p align="center">
   <i>"Always at your service, Boss."</i>
 </p>
-```
-
-Enjoy the new look! Your project now reflects the latest "Turbo" upgrades. 🛡️🚀🤖
