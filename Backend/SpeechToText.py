@@ -5,6 +5,7 @@ from selenium.webdriver.chrome.options import Options
 from dotenv import dotenv_values
 import os
 import mtranslate as mt
+import time
 
 # Load environment variables
 env_vars = dotenv_values(".env")
@@ -25,24 +26,35 @@ HtmlCode = '''<!DOCTYPE html>
         let recognition;
 
         function startRecognition() {
-            recognition = new webkitSpeechRecognition() || new SpeechRecognition();
+            if (recognition) {
+                try { recognition.stop(); } catch(e) {}
+            }
+            recognition = new (window.webkitSpeechRecognition || window.SpeechRecognition)();
             recognition.lang = '';
             recognition.continuous = true;
+            recognition.interimResults = true;
 
             recognition.onresult = function(event) {
-                const transcript = event.results[event.results.length - 1][0].transcript;
-                output.textContent += transcript;
+                let transcript = "";
+                for (let i = 0; i < event.results.length; i++) {
+                    transcript += event.results[i][0].transcript;
+                }
+                output.textContent = transcript;
             };
 
             recognition.onend = function() {
-                recognition.start();
+                try { recognition.start(); } catch(e) {}
             };
+            
+            output.textContent = "";
             recognition.start();
         }
 
         function stopRecognition() {
-            recognition.stop();
-            output.innerHTML = "";
+            if (recognition) {
+                recognition.stop();
+            }
+            output.textContent = "";
         }
     </script>
 </body>
@@ -88,7 +100,6 @@ driver = None
 def InitializeDriver():
     global driver
     if driver is None:
-        # Use webdriver-manager for ChromeDriver
         from webdriver_manager.chrome import ChromeDriverManager
         service = Service(ChromeDriverManager().install())
         driver = webdriver.Chrome(service=service, options=chrome_options)
@@ -123,22 +134,67 @@ def UniversalTranslator(Text):
     english_translation = mt.translate(Text, "en", "auto")
     return english_translation
 
-def SpeechRecognition():
+def StartRecognition():
     global driver
     InitializeDriver()
-    driver.get("file:///" + Link)
-    driver.find_element(By.ID, "start").click()
+    
+    target_url = "file:///" + Link.replace("\\", "/")
+    try:
+        current_url = driver.current_url.replace("\\", "/")
+    except Exception:
+        current_url = ""
 
+    if target_url.lower() not in current_url.lower():
+        driver.get("file:///" + Link)
+        
+    try:
+        driver.find_element(By.ID, "start").click()
+    except Exception as e:
+        # If click fails, maybe page re-load is needed
+        driver.get("file:///" + Link)
+        driver.find_element(By.ID, "start").click()
+
+def StopRecognition():
+    global driver
+    if driver:
+        try:
+            driver.find_element(By.ID, "end").click()
+        except Exception:
+            pass
+
+def GetCurrentRecognitionText():
+    global driver
+    if driver:
+        try:
+            return driver.execute_script("return document.getElementById('output').textContent;")
+        except Exception:
+            return ""
+    return ""
+
+
+def SpeechRecognition():
+    StartRecognition()
+    last_text = ""
+    last_update_time = time.time()
+    
     while True:
         try:
-            Text = driver.find_element(By.ID, "output").text
+            Text = GetCurrentRecognitionText()
             if Text:
-                driver.find_element(By.ID, "end").click()
-                if InputLanguage.lower() == "en" or "en" in InputLanguage.lower():
-                    return QueryModifier(Text)
-                else:
-                    SetAssistantStatus("Translating...")
-                    return QueryModifier(UniversalTranslator(Text))
+                if Text != last_text:
+                    last_text = Text
+                    last_update_time = time.time()
+                
+                # If no update for 0.8 seconds, assume finished
+                if time.time() - last_update_time > 0.8:
+                    StopRecognition()
+                    if InputLanguage.lower() == "en" or "en" in InputLanguage.lower():
+                        return QueryModifier(Text)
+                    else:
+                        SetAssistantStatus("Translating...")
+                        return QueryModifier(UniversalTranslator(Text))
+            
+            time.sleep(0.1)
         except Exception:
             pass
 

@@ -1,34 +1,10 @@
 [
     {
         "role": "user",
-        "content": "Thank you friday."
+        "content": "Friday."
     },
     {
         "role": "assistant",
-        "content": "I'm on standby, Boss. What can I do for you?"
-    },
-    {
-        "role": "user",
-        "content": "Tomorrow is my friends wedding friday."
-    },
-    {
-        "role": "assistant",
-        "content": "I've got it, Boss. Tomorrow, Sunday, 26th April 2026, is your friend's special day. What do you need me to do?"
-    },
-    {
-        "role": "user",
-        "content": "Kundi maar rakhi."
-    },
-    {
-        "role": "assistant",
-        "content": "Creating a congratulatory image for your friend's wedding, Boss."
-    },
-    {
-        "role": "user",
-        "content": "Old now."
-    },
-    {
-        "role": "assistant",
-        "content": "I'm on it, Boss. Generating a nostalgic wedding-themed image for you now."
+        "content": "Ready when you are, Boss. What can I assist you with?"
     }
 ]

@@ -19,10 +19,12 @@ from Backend.WorldNews import GetWorldNews
 from dotenv import dotenv_values
 from asyncio import run
 from time import sleep
+import webbrowser
 import subprocess
 import threading
 import json
 import os
+import random
 
 # Load environment variables
 env_vars = dotenv_values(".env")
@@ -34,6 +36,7 @@ DefaultMessage = f""" {Username}: Hello {Assistantname}, How are you?
 
 functions = ["open", "close", "play", "system", "content", "google search", "youtube search"]
 subprocess_list = []
+RemainingTextBuffer = []
 
 # World news trigger phrases for fallback detection
 WORLD_NEWS_TRIGGERS = [
@@ -108,6 +111,23 @@ def InitialExecution():
     ChatLogIntegration()
     ShowChatOnGUI()
 
+# Startup Greeting with delay
+def StartupGreeting():
+    sleep(1) # Wait for GUI to stabilize
+    Greetings = [
+        "All systems are operational.",
+        "I am ready to assist you.",
+        "How can I help you today, boss?",
+        "Security protocols verified. I'm online.",
+        "The world is waiting for your command.",
+        "Everything is running smoothly. Ready for input.",
+        "I've optimized my subsystems. How may I serve you?",
+        "Your assistant is back online and ready for action."
+    ]
+    GreetingText = f"Greetings Boss !! {random.choice(Greetings)}"
+    ShowTextToScreen(f"{Assistantname}: {GreetingText}")
+    RemainingTextBuffer = TextToSpeech(GreetingText)
+
 # Main execution logic
 def MainExecution():
     try:
@@ -118,8 +138,37 @@ def MainExecution():
         SetAsssistantStatus("Listening...")
         Query = SpeechRecognition()
         query_lower = Query.lower()
+        
+        # ── Wake Word Check ──
+        if Assistantname.lower() not in query_lower:
+            return True
+
         ShowTextToScreen(f"{Username}: {Query}")
+        
+        # ── Continue Command Logic ──
+        global RemainingTextBuffer
+        if "continue" in query_lower:
+            if RemainingTextBuffer:
+                Answer = " ".join(RemainingTextBuffer)
+                ShowTextToScreen(f"{Assistantname}: Resuming...")
+                SetAsssistantStatus("Answering...")
+                RemainingTextBuffer = TextToSpeech(Answer)
+                return True
+            else:
+                Answer = "I don't have anything to continue, sir."
+                ShowTextToScreen(f"{Assistantname}: {Answer}")
+                SetAsssistantStatus("Answering...")
+                RemainingTextBuffer = TextToSpeech(Answer)
+                return True
+
+        # ── Stop / Wait / Pause handling ──
+        if any(word in query_lower for word in ["wait", "pause", "stop", "hold on", "pose"]):
+            if len(query_lower.split()) <= 3: # Only for short/direct commands
+                ShowTextToScreen(f"{Assistantname}: Holding...")
+                return True
+
         SetAsssistantStatus("Thinking...")
+        RemainingTextBuffer = [] # Clear buffer for new query
         Decision = FirstLayerDMM(Query)
 
         # ── Logic-based Response Handling ──
@@ -127,7 +176,7 @@ def MainExecution():
             Answer = Decision
             ShowTextToScreen(f"{Assistantname}: {Answer}")
             SetAsssistantStatus("Answering...")
-            TextToSpeech(Answer)
+            RemainingTextBuffer = TextToSpeech(Answer)
             return True
 
         # Special World News Trigger from Router
@@ -135,7 +184,7 @@ def MainExecution():
             Answer = "Opening World Intelligence Monitor, boss."
             ShowTextToScreen(f"{Assistantname}: {Answer}")
             SetAsssistantStatus("Answering...")
-            TextToSpeech(Answer)
+            RemainingTextBuffer = TextToSpeech(Answer)
             
             # Now actually fetch the news
             SetAsssistantStatus("Scanning world intel...")
@@ -149,7 +198,29 @@ def MainExecution():
             Answer = GetWorldNews(topic=topic)
             ShowTextToScreen(f"{Assistantname}: {Answer}")
             SetAsssistantStatus("Answering...")
-            TextToSpeech(Answer)
+            RemainingTextBuffer = TextToSpeech(Answer)
+            return True
+
+        # Special Financial Monitor Trigger
+        if "financial_intelligence_monitor" in Decision:
+            Answer = "Initiating Quantum Financial Synthesis. Scanning global markets, Boss."
+            ShowTextToScreen(f"{Assistantname}: {Answer}")
+            SetAsssistantStatus("Answering...")
+            RemainingTextBuffer = TextToSpeech(Answer)
+            
+            # Sync fresh data
+            SetAsssistantStatus("Syncing market data...")
+            try:
+                # Run the backend script to refresh JSON
+                subprocess.run(["python", "MarketIntel.py"], shell=False, check=False)
+                
+                # Open the dashboard
+                from Backend.WorldNews import _ensure_local_server
+                _ensure_local_server() # Start server if not running
+                webbrowser.open("http://localhost:8000/Frontend/FinancialDashboard.html")
+            except Exception as e:
+                print(f"Error launching financial monitor: {e}")
+                
             return True
 
         print(f"\nDecision: {Decision}\n")
@@ -200,7 +271,7 @@ def MainExecution():
                 Answer = "Creating the images, Boss. Please wait a moment."
                 ShowTextToScreen(f"{Assistantname}: {Answer}")
                 SetAsssistantStatus("Answering...")
-                TextToSpeech(Answer)
+                RemainingTextBuffer = TextToSpeech(Answer)
                 
                 # ALWAYS return here for image tasks to prevent Groq from interjecting
                 return True
@@ -213,7 +284,8 @@ def MainExecution():
             Answer = RealtimeSearchEngine(QueryModifier(Merged_query))
             ShowTextToScreen(f"{Assistantname}: {Answer}")
             SetAsssistantStatus("Answering...")
-            TextToSpeech(Answer)
+            # Voice disabled for search results as per user request
+            RemainingTextBuffer = []
             return True
 
         else:
@@ -224,7 +296,7 @@ def MainExecution():
                     Answer = ChatBot(QueryModifier(QueryFinal))
                     ShowTextToScreen(f"{Assistantname}: {Answer}")
                     SetAsssistantStatus("Answering...")
-                    TextToSpeech(Answer)
+                    RemainingTextBuffer = TextToSpeech(Answer)
                     return True
 
                 elif "realtime" in queries:
@@ -233,7 +305,8 @@ def MainExecution():
                     Answer = RealtimeSearchEngine(QueryModifier(QueryFinal))
                     ShowTextToScreen(f"{Assistantname}: {Answer}")
                     SetAsssistantStatus("Answering...")
-                    TextToSpeech(Answer)
+                    # Voice disabled for search results as per user request
+                    RemainingTextBuffer = []
                     return True
 
                 elif "world_news" in queries:
@@ -248,7 +321,7 @@ def MainExecution():
                     Answer = GetWorldNews(topic=topic)
                     ShowTextToScreen(f"{Assistantname}: {Answer}")
                     SetAsssistantStatus("Answering...")
-                    TextToSpeech(Answer)
+                    RemainingTextBuffer = TextToSpeech(Answer)
                     return True
 
                 elif "exit" in queries:
@@ -256,7 +329,7 @@ def MainExecution():
                     Answer = ChatBot(QueryModifier(QueryFinal))
                     ShowTextToScreen(f"{Assistantname}: {Answer}")
                     SetAsssistantStatus("Answering...")
-                    TextToSpeech(Answer)
+                    RemainingTextBuffer = TextToSpeech(Answer)
                     os._exit(1)
 
     except Exception as e:
@@ -295,5 +368,7 @@ if __name__ == "__main__":
     InitialExecution()
 
     thread1 = threading.Thread(target=FirstThread, daemon=True)
+    thread2 = threading.Thread(target=StartupGreeting, daemon=True)
     thread1.start()
+    thread2.start()
     SecondThread()

@@ -1,0 +1,106 @@
+{
+    "timestamp": "2026-04-28T19:58:42.104526",
+    "market_trend": "BEARISH",
+    "pulses": [
+        "MARKET PULSE: S&P 500 exhibiting BEARISH momentum with a 0.54% LOSS.",
+        "TECH ALERT: NVDA at $212.11 (-2.08%).",
+        "INTEL 1: WEEKLY MARKET COMMENTARY",
+        "INTEL 2: GEOPOLITICAL CONCERNS HAVE BEEN SET ASIDE! THE AI THEME REGAINS DOMINANCE AS SOUTH KOREAN AND **** STOCK MARKETS HIT NEW ALL-TIME HIGHS."
+    ],
+    "stocks": {
+        "AAPL": {
+            "history": [
+                273.1700134277344,
+                273.42999267578125,
+                271.05999755859375,
+                267.6099853515625,
+                271.1400146484375
+            ],
+            "latest_price": 271.11,
+            "change_pct": 1.3079
+        },
+        "MSFT": {
+            "history": [
+                432.9200134277344,
+                415.75,
+                424.6199951171875,
+                424.82000732421875,
+                426.4599914550781
+            ],
+            "latest_price": 426.19,
+            "change_pct": 0.3225
+        },
+        "NVDA": {
+            "history": [
+                202.5,
+                199.63999938964844,
+                208.27000427246094,
+                216.61000061035156,
+                212.38999938964844
+            ],
+            "latest_price": 212.11,
+            "change_pct": -2.0775
+        },
+        "TSLA": {
+            "history": [
+                387.510009765625,
+                373.7200012207031,
+                376.29998779296875,
+                378.6700134277344,
+                377.6300048828125
+            ],
+            "latest_price": 377.25,
+            "change_pct": -0.375
+        },
+        "SPY": {
+            "history": [
+                711.2100219726562,
+                708.4500122070312,
+                713.9400024414062,
+                715.1699829101562,
+                711.5001220703125
+            ],
+            "latest_price": 711.32,
+            "change_pct": -0.5383
+        }
+    },
+    "news": [
+        {
+            "ticker": "MACRO",
+            "title": "Weekly market commentary",
+            "link": "https://news.google.com/rss/articles/CBMingFBVV95cUxQLWJDTjBBalYwVHVpc0VxV1BwRE1xeUt1RWlLQ1VJdnJQRXNnb3p6MnFNbjRBV0s0TnlldW4wSVIycFRQeVNISWJ3VV9wMWdjX1ZndE1Tc24tNzc0anNYWjl0SVBsRDhSa0dVTWlyVVYxX0w5b2JhTFB0Tm9Vb2FwYVZubTU1SVJlcy0zMEpXOEM4ZlhiSU1QazdVQVlldw?oc=5&hl=en-IN&gl=IN&ceid=IN:en",
+            "publisher": "blackrock.com"
+        },
+        {
+            "ticker": "MACRO",
+            "title": "Geopolitical concerns have been set aside! The AI theme regains dominance as South Korean and **** stock markets hit new all-time highs.",
+            "link": "https://news.google.com/rss/articles/CBMipgFBVV95cUxQdGlCUFJXUlhmaUlGVmpHYm9QTkRmbDhuWnNrVkFKMjFfZHdxMWVnRUtiR25Eeko5ZzBBYlNFbGpFdGZsY1dMa2ZWMDV6V3ZqOFFrZUY3cUFHRUJBbHhDZGdSNDZtYnBhYkdlOHZrbGdfSU03a2dpa0NSLVl2bjB3UlFEelpVaWM5NEhfck0yckhlWllqeEg5UDc4QlZUYzQ1UlpYa05n?oc=5&hl=en-IN&gl=IN&ceid=IN:en",
+            "publisher": "\u5bcc\u9014\u725b\u725b"
+        },
+        {
+            "ticker": "MACRO",
+            "title": "Wall Street posts worst month since March amid geopolitics, trade, and AI fears",
+            "link": "https://news.google.com/rss/articles/CBMivgFBVV95cUxPNDRieWl2Unc4dWNZUVdGMVNfTC1faVZCVGtoN2psV2lBR3M5S3lTQ3pXUTdKeVNWV0NOdUYxOUlURG42Q3BTMGhDa3Q3bUZUdFZZMU8wd296WmpXMlpQZVRqakhtRGFPZmFOc0wyVVdFWk1WTVhCeXVZRHgzbU1tTm9BTW81LW1MQzFPRGNXYm53ZHVRYnRsTk0zZXdITC1wdzBNZHQ2em41RFg1amh2c2FBRHVadnFIb2lTUkln?oc=5&hl=en-IN&gl=IN&ceid=IN:en",
+            "publisher": "Investing.com"
+        },
+        {
+            "ticker": "MACRO",
+            "title": "Stocks Can\u2019t Escape AI, Trade, and Geopolitical Risks. Can Nvidia Provide the Spark?",
+            "link": "https://news.google.com/rss/articles/CBMifkFVX3lxTE1LVFJid1liTzg2a1k0OE9VOUIzR2R6VU5VdXp0dGVEeDk0dTd4OUZOcWhwQkw0N2hET1pEOGZUeGVIWFJ3eE5VZG1LTXJPSUd1al9TOUVTeGhtNVlxWVJKS19KYTh1OTY2VFUxdXZTTEV4WklSRjc5QVhMejB2dw?oc=5&hl=en-IN&gl=IN&ceid=IN:en",
+            "publisher": "Barron's"
+        },
+        {
+            "ticker": "MACRO",
+            "title": "Here\u2019s (Almost) Everything Wall Street Expects in 2026",
+            "link": "https://news.google.com/rss/articles/CBMibEFVX3lxTE1pYUVGeHJlTE9uUThIU0ZDT1FOZmtjQTdTaDB1ekFpWTl1SUNSenk1T21iaHZHUkd4U3Z3SWNUUi14R3ZmbWpydmhmd0FxR0phX0tNc3psMUxDUWtOclhNZmI5YmM4WGNmYndfcQ?oc=5&hl=en-IN&gl=IN&ceid=IN:en",
+            "publisher": "Bloomberg.com"
+        }
+    ],
+    "video_ids": [
+        "iEpJwprxDdk",
+        "rVM4ew5l7Jc",
+        "NxCz1TZEfUc",
+        "vv8zbwS6IKA"
+    ],
+    "finnhub_key": "d7noqthr01qm36378g7gd7noqthr01qm36378g80"
+}

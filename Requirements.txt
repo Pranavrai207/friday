@@ -18,3 +18,5 @@ PyQt5
 webdriver-manager
 feedparser
 gnews
+ddgs
+yfinance

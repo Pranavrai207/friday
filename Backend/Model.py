@@ -10,30 +10,31 @@ co = cohere.Client(api_key=CohereAPIKey)
 funcs = [
     "exit", "general", "realtime", "open", "close", "play",
     "generate image", "create image", "draw image", "system", "content",
-    "google search", "youtube search", "reminder", "world_news"
+    "google search", "youtube search", "reminder", "world_news", "financial_intelligence_monitor"
 ]
 
 messages = []
 
 preamble = """
-You are a very accurate Decision-Making Model, which decides what kind of a query is given to you.
-You will decide whether a query is a 'general' query, a 'realtime' query, a 'world_news' query, or is asking to perform any task or automation like 'open facebook, instagram', 'can you write a application and open it in notepad'
-*** Do not answer any query, just decide what kind of query is given to you. ***
--> Respond with 'general ( query )' if a query can be answered by a llm model (conversational ai chatbot) and doesn't require any up to date information like if the query is 'who was akbar?' respond with 'general who was akbar?', if the query is 'how can i study more effectively?' respond with 'general how can i study more effectively?', if the query is 'can you help me with this math problem?' respond with 'general can you help me with this math problem?', if the query is 'Thanks, i really liked it.' respond with 'general thanks, i really liked it.' , if the query is 'what is python programming language?' respond with 'general what is python programming language?', etc. Respond with 'general (query)' if a query doesn't have a proper noun or is incomplete like if the query is 'who is he?' respond with 'general who is he?', if the query is 'what's his networth?' respond with 'general what's his networth?', if the query is 'tell me more about him.' respond with 'general tell me more about him.', and so on even if it require up-to-date information to answer. Respond with 'general (query)' if the query is asking about time, day, date, month, year, etc like if the query is 'what's the time?' respond with 'general what's the time?'.
--> Respond with 'realtime ( query )' if a query can not be answered by a llm model (because they don't have realtime data) and requires up to date information like if the query is 'who is indian prime minister' respond with 'realtime who is indian prime minister', if the query is 'tell me about facebook's recent update.' respond with 'realtime tell me about facebook's recent update.', if the query is 'tell me news about coronavirus.' respond with 'realtime tell me news about coronavirus.', etc and if the query is asking about any individual or thing like if the query is 'who is akshay kumar' respond with 'realtime who is akshay kumar', etc.
--> Respond with 'world_news' if the query is asking for a world news briefing, current global events, what is happening around the world, today's top news, news update, news summary, or a general news briefing like if the query is 'what's happening around the world?' respond with 'world_news', if the query is 'tell me today's news' respond with 'world_news', if the query is 'what's in the news?' respond with 'world_news', if the query is 'give me a news briefing' respond with 'world_news', if the query is 'what's the latest news?' respond with 'world_news', if the query is 'any news from india?' respond with 'world_news', if the query is 'what's happening?' respond with 'world_news', if the query is 'global news update' respond with 'world_news', if the query is 'top stories today' respond with 'world_news', etc.
--> Respond with 'open (application name or website name)' if a query is asking to open any application like 'open facebook', 'open telegram', etc. but if the query is asking to open multiple applications, respond with 'open 1st application name, open 2nd application name' and so on.
--> Respond with 'close (application name)' if a query is asking to close any application like 'close notepad', 'close facebook', etc. but if the query is asking to close multiple applications or websites, respond with 'close 1st application name, close 2nd application name' and so on.
--> Respond with 'play (song name)' if a query is asking to play any song like 'play afsanay by ys', 'play let her go', etc. but if the query is asking to play multiple songs, respond with 'play 1st song name, play 2nd song name' and so on.
--> Respond with 'generate image (image prompt)' if a query is requesting to generate a image with given prompt like 'generate image of a lion', 'generate image of a cat', etc. but if the query is asking to generate multiple images, respond with 'generate image 1st image prompt, generate image 2nd image prompt' and so on.
--> Respond with 'reminder (datetime with message)' if a query is requesting to set a reminder like 'set a reminder at 9:00pm on 25th june for my business meeting.' respond with 'reminder 9:00pm 25th june business meeting'.
--> Respond with 'system (task name)' if a query is asking to mute, unmute, volume up, volume down , etc. but if the query is asking to do multiple tasks, respond with 'system 1st task, system 2nd task', etc.
--> Respond with 'content (topic)' if a query is asking to write any type of content like application, codes, emails or anything else about a specific topic but if the query is asking to write multiple types of content, respond with 'content 1st topic, content 2nd topic' and so on.
--> Respond with 'google search (topic)' if a query is asking to search a specific topic on google but if the query is asking to search multiple topics on google, respond with 'google search 1st topic, google search 2nd topic' and so on.
--> Respond with 'youtube search (topic)' if a query is asking to search a specific topic on youtube but if the query is asking to search multiple topics on youtube, respond with 'youtube search 1st topic, youtube search 2nd topic' and so on.
-*** If the query is asking to perform multiple tasks like 'open facebook, telegram and close whatsapp' respond with 'open facebook, open telegram, close whatsapp' ***
-*** If the user is saying goodbye or wants to end the conversation like 'bye jarvis.' respond with 'exit'.***
-*** Respond with 'general (query)' if you can't decide the kind of query or if a query is asking to perform a task which is not mentioned above. ***
+You are a Jarvis-level Decision-Making Model. Your primary goal is to ensure the user receives the most accurate and up-to-date information possible. 
+
+*** Do not answer any query. Your only job is to categorize the query into the correct functional intent. ***
+
+-> Respond with 'general ( query )' ONLY for timeless, conceptual, or static knowledge that never changes (e.g., "how does gravity work?", "who was William Shakespeare?", "tell me a story", "what is the capital of France?"). 
+
+-> Respond with 'realtime ( query )' for ANY query that involves dynamic, changing, or real-time information. You must infer this intent automatically without the user saying "search". This includes:
+   - Financials: Gold/silver/stock/crypto prices, market trends.
+   - News & Events: Current events, latest news, sports scores, weather.
+   - People: Any query about a living person, celebrity, or public figure (net worth, current status, recent activities).
+   - Time-Sensitive: Any query containing "today", "now", "latest", "current", "recent", "price", "status".
+   - CRITICAL: If there is ANY reasonable chance the info could be outdated, default to 'realtime'.
+
+-> Respond with 'world_news' for requests for global news briefings or general "what's happening" updates.
+-> Respond with 'financial_intelligence_monitor' for requests for stock market updates, financial dashboards, portfolio status, or market intelligence briefings.
+-> Respond with 'open (app/site)', 'close (app/site)', 'play (song)', 'generate image (prompt)', 'reminder (time/msg)', 'system (task)', 'content (topic)', 'google search (topic)', or 'youtube search (topic)' for specific automation tasks as defined in your protocols.
+
+*** If multiple tasks are requested (e.g., 'open chrome and tell me the gold price'), respond with both intents: 'open chrome, realtime gold price'. ***
+*** If the user wants to end the conversation, respond with 'exit'. ***
 """
 
 ChatHistory = [
@@ -230,7 +231,19 @@ def FirstLayerDMM(prompt: str = "test"):
         # We return a specific list so Main.py can handle the message and the news fetching
         return ["world_news_monitor"]
 
-    # 4. EVERYTHING ELSE -> LLM CALL
+    # 5. SYSTEM SOUND COMMANDS
+    SYSTEM_SOUND_TRIGGERS = ["mute system", "unmute system", "volume up", "volume down", "system sound", "system voice"]
+    if any(s in prompt_lower for s in SYSTEM_SOUND_TRIGGERS):
+        if "unmute" in prompt_lower:
+            return ["system unmute"]
+        elif "mute" in prompt_lower:
+            return ["system mute"]
+        elif "up" in prompt_lower:
+            return ["system volume up"]
+        elif "down" in prompt_lower:
+            return ["system volume down"]
+
+    # 6. EVERYTHING ELSE -> LLM CALL
     return LLMDecisionModel(prompt)
 
     

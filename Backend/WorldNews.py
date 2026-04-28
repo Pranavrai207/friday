@@ -13,14 +13,10 @@ import webbrowser
 import os
 import json
 from gnews import GNews
-from groq import Groq
-from dotenv import dotenv_values
-from datetime import datetime
 import re
+from datetime import datetime
 
-env_vars = dotenv_values(".env")
-GroqAPIKey = env_vars.get("GroqAPIKey")
-client = Groq(api_key=GroqAPIKey)
+# NO GROQ - Real Intel Only
 
 TOPIC_FEEDS = {
     "world": [
@@ -132,29 +128,23 @@ def _layer2_rss(topic: str, max_articles: int) -> list:
 
 
 def _layer3_groq(topic: str) -> list:
-    print("[WorldNews] Layer 3: Groq knowledge fallback")
-    label = {"india": "India", "tech": "technology", "business": "business"}.get(topic, "world")
-    try:
-        resp = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
-            messages=[
-                {"role": "system", "content": (
-                    "You are a news headline generator. Generate exactly 8 concise, "
-                    "realistic news headlines based on your knowledge of recent global events. "
-                    "Return ONLY a JSON array of strings — no extra text, no markdown."
-                )},
-                {"role": "user", "content": f"Generate 8 current {label} news headlines."},
-            ],
-            max_tokens=400, temperature=0.4,
-        )
-        raw = resp.choices[0].message.content.strip().replace("```json","").replace("```","").strip()
-        headlines = json.loads(raw)
-        if isinstance(headlines, list):
-            print(f"[WorldNews] Layer 3 (Groq): {len(headlines)} headlines")
-            return [str(h) for h in headlines]
-    except Exception as e:
-        print(f"[WorldNews] Layer 3 failed: {e}")
+    # REMOVED: NO LLM GENERATED HEADLINES
     return []
+
+def _calculate_instability(articles: list) -> int:
+    """Calculates a factual instability index based on keyword density."""
+    conflict_keywords = ["war", "conflict", "crisis", "attack", "strike", "tension", "clash", "threat", "nuclear", "missile"]
+    count = 0
+    total_words = 0
+    for a in articles:
+        words = a.lower().split()
+        total_words += len(words)
+        count += sum(1 for w in words if any(ck in w for ck in conflict_keywords))
+    
+    # Base instability is 15%, scaled up by keyword density
+    if not total_words: return 15
+    density = (count / len(articles)) * 100
+    return min(95, int(15 + (density * 5)))
 
 
 def _get_headlines(topic: str, max_articles: int = 10) -> list:
@@ -201,29 +191,13 @@ def GetWorldNews(topic: str = "world", max_articles: int = 10) -> str:
     articles = _get_headlines(topic, max_articles)
 
     if not articles:
-        return "Boss, all three news layers failed. Check connection."
+        return "Boss, global intelligence networks are unresponsive. Check link."
 
-    _open_world_monitor(articles, topic)
+    instability = _calculate_instability(articles)
+    _open_world_monitor(articles, topic, instability)
 
-    headlines_text = "\n".join(f"• {a}" for a in articles)
-    try:
-        response = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
-            messages=[
-                {"role": "system", "content": (
-                    "You are F.R.I.D.A.Y., Tony Stark's AI assistant. "
-                    "Give a sharp, confident 3-4 sentence spoken news briefing. "
-                    "Start with 'Here's what's happening, Boss.' "
-                    "No bullet points. Spoken audio. Punchy."
-                )},
-                {"role": "user", "content": f"Today's headlines:\n{headlines_text}\n\nBriefing please."},
-            ],
-            max_tokens=300, temperature=0.7,
-        )
-        return response.choices[0].message.content.strip()
-    except Exception as e:
-        print(f"[WorldNews] Groq briefing error: {e}")
-        return "Here's what's happening, Boss. " + " | ".join(articles[:3])
+    # Return raw briefing (No LLM)
+    return f"Here's the raw intel, Boss. Top story: {articles[0]}. Current instability index at {instability} percent."
 
 def _ensure_local_server():
     """Checks if the local server is running on port 8000; if not, starts it."""
@@ -253,7 +227,7 @@ def _ensure_local_server():
         except Exception as e:
             print(f"[WorldNews] Failed to start server: {e}")
 
-def _open_world_monitor(articles: list, topic: str = "world"):
+def _open_world_monitor(articles: list, topic: str = "world", instability: int = 40):
     markers = []
     seen_cities = set()
     for article in articles:
@@ -462,8 +436,8 @@ body::before {{ content:''; position:fixed; inset:0; background:repeating-linear
             <div class="panel" id="news-panel" style="flex:1.5;"><div class="panel-header">BREAKING NEWS</div><div id="news-feed"></div></div>
             <div class="panel" style="flex:1;">
                 <div class="panel-header">THREAT INTEL</div>
-                <div class="stat-box"><div class="stat-label">GLOBAL INSTABILITY <span id="v1">84%</span></div><div class="stat-bar-bg"><div class="stat-bar-fill" id="b1" style="width:84%; background:var(--alert);"></div></div></div>
-                <div class="stat-box"><div class="stat-label">CYBER THREAT <span id="v2">62%</span></div><div class="stat-bar-bg"><div class="stat-bar-fill" id="b2" style="width:62%;"></div></div></div>
+                <div class="stat-box"><div class="stat-label">INSTABILITY INDEX <span id="v1">{instability}%</span></div><div class="stat-bar-bg"><div class="stat-bar-fill" id="b1" style="width:{instability}%; background:var(--alert);"></div></div></div>
+                <div class="stat-box"><div class="stat-label">NETWORK LOAD <span id="v2">31%</span></div><div class="stat-bar-bg"><div class="stat-bar-fill" id="b2" style="width:31%;"></div></div></div>
                 <div class="console-box" id="console-out"></div>
             </div>
         </div>
@@ -537,5 +511,5 @@ function setVolume(id,val){{ const f=document.getElementById(id); f.contentWindo
     
     # Automate the internal server and use Localhost
     _ensure_local_server()
-    webbrowser.open("http://localhost:8000/jarvis-ai-assistant/Frontend/WorldMonitor.html")
-    print(f"[WorldNews] Monitor launched via internal server: http://localhost:8000/jarvis-ai-assistant/Frontend/WorldMonitor.html")
+    webbrowser.open("http://localhost:8000/Frontend/WorldMonitor.html")
+    print(f"[WorldNews] Monitor launched via internal server: http://localhost:8000/Frontend/WorldMonitor.html")
